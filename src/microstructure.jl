@@ -6,7 +6,6 @@ function piecewise(tt_, yy, tend = tt[end])
     tt, repeat(yy, inner=2)
 end
 
-
 struct Prior
     N
 
@@ -37,7 +36,7 @@ struct Prior
 end
 
 # Metropolis parameters
-function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, quc = 0.9, η0::Float64 = 0.0, printiter=100, fixalpha = false, fixeta = false, summaryfile = STDOUT )
+function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, quc = 0.9, η0::Float64 = 0.0, printiter=100, fixalpha = false, fixeta = false, summaryfile = "/dev/" )
     
     N = Π.N
 
@@ -100,7 +99,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
     C = zeros(n+1)
     θs = Any[]
     ηs = Float64[]
-    subinds = 1:1:iterations
+
     samples = zeros(N, length(subinds))
 
     for iter in 1:iterations
@@ -141,7 +140,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
                 α = α˚
                 mod(iter, printiter) == 0 && print("✓")
             end
-            push!(αs, α)
+            
 
         end
         if !fixeta
@@ -195,33 +194,15 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
                 x[i] = rand(Normal(hi, sqrt(Hi)))
             end
         end
-        push!(θs, θ)
-        push!(ηs, η)
         if iter in subinds
+            push!(αs, α)
+            push!(ηs, η)
             samples[:, si] = θ
             si += 1
         end
     end
-    open(summaryfile, "w") do f
-        println(f, "prior alpha", Πα)
-        println(f, "n $n nf $nf")
-        println(f, "η0 $η0 ")  
-        println(f, "N $N m $m")  
-        println(f, "α1 $α1 β1 $β1")
-        println(f, "αη $αη βη $βη")
-        println(f, "x0 ~ N($μ0, $C0)")
-        println(f, "σα $σα")
-        println(f, "acc α", round(acc/iterations, 3))
-        println(f, "fixalpha $fixalpha fixeta $fixeta")
-        println(f, "iterations ", iterations)
-        println(f, "samples at ", subinds)
-        println(f, "$quc % credible bands")
-    end
 
-    
-    
-
-    samples, ηs, αs
+    samples, ηs, αs, round(acc/iterations, 3)
 end
 
 struct Posterior
@@ -230,6 +211,7 @@ struct Posterior
     post_qup
     post_mean
     post_mean_root
+    qu
 end
 function compute_posterior_s0(samples; burnin = size(samples, 2)÷3, quc = 0.90)
     p = 1.0 - quc 
@@ -244,7 +226,8 @@ function compute_posterior_s0(samples; burnin = size(samples, 2)÷3, quc = 0.90)
         post_median,
         post_qup,
         post_mean,
-        post_mean_root
+        post_mean_root,
+        quc
     )
 end
 
