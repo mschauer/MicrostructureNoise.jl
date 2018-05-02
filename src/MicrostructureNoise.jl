@@ -1,5 +1,7 @@
 module MicrostructureNoise
 
-# package code goes here
+using Bridge, Distributions
+
+include("microstructure.jl")
 
 end # module
