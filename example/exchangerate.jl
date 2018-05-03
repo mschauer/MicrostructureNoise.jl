@@ -12,7 +12,7 @@ y = Float64.(dat[1:10:130260, 3])
 
 prior = MicrostructureNoise.Prior(
 N = 40,
-α = 0.1,
+
 α1 = 0.0,
 β1 = 0.0,
 
@@ -28,4 +28,4 @@ C0 = 5.0
 σα = 0.1
 θs, ηs, αs, p = MicrostructureNoise.MCMC(prior, tt, y, α, σα, 1500)
 
-posterior = MicrostructureNoise.compute_posterior_s0(θs)
+posterior = MicrostructureNoise.posterior_volatility(θs)

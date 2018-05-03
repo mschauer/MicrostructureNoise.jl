@@ -1,11 +1,37 @@
-function piecewise(tt_, yy, tend = tt[end])
-    tt = [tt_[1]]
-    n = length(yy)
-    append!(tt, repeat(tt_[2:n], inner=2))
-    push!(tt, tend)
-    tt, repeat(yy, inner=2)
-end
 
+"""
+    MicrostructureNoise.Prior(; N, α1, β1, αη, βη, Πα, μ0, C0)
+    MicrostructureNoise.Prior(; kwargs...)
+
+Struct holding prior distribution parameters.
+`N` is the number of bins, 
+`InverseGamma(α1, β1)` is the prior of the first bin,
+the prior on the noise is `InverseGamma(αη, βη)`,
+the hidden state at start time is `Normal(μ0, C0)`, 
+and `Πα` is a prior `Distribution`` for `α`, 
+for example `Πα = LogNormal(1., 0.5)`.
+
+Note: All keywordargs `N, α1, β1, αη, βη, Πα, μ0, C0`
+are mandatory.
+
+
+Example:
+```
+prior = MicrostructureNoise.Prior(
+N = 40, # number of bins
+
+α1 = 0.0, # prior on first bin
+β1 = 0.0,
+
+αη = 0.3, # noise prior InverseGamma(αη, βη)
+βη = 0.3,
+
+Πα = LogNormal(1., 0.5),
+μ0 = 0.0,
+C0 = 5.0
+)
+```
+"""
 struct Prior
     N
 
@@ -35,8 +61,27 @@ struct Prior
     end
 end
 
-# Metropolis parameters
-function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, quc = 0.9, η0::Float64 = 0.0, printiter=100, fixalpha = false, fixeta = false, summaryfile = "/dev/" )
+"""
+    MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> θ, ηs, αs, pacc
+
+Run the Markov Chain Monte Carlo procedure for `iterations` iterations,
+on data `(tt, yy)`, where `tt` are observation times and `yy` are observations,
+`α0` is the initial guess for the smoothing parameter `α` (necessary),
+`η0` is the iniat guess woth the noise covariance (optional),
+and `σα` is the stepsize for the random walk proposal for `α`.
+
+Prints verbose output every `printiter` iteration.
+
+Returns `θs, ηs, αs, pacc`,
+`ηs`, `αs`` are vectors of iterates,
+possible subsampled at indices `subinds`,
+`θs` is a Matrix with iterates of `θ` rows.
+`paccα` is the acceptance probability for the update step of `α`.
+
+Keyword args `fixalpha`, `fixeta` when set to `true` allow fixing
+`α` and `η` at their initial values.
+"""
+function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100, fixalpha = false, fixeta = false)
     
     N = Π.N
 
@@ -205,6 +250,20 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
     samples, ηs, αs, round(acc/iterations, 3)
 end
 
+"""
+```
+struct Posterior
+    post_qlow # Lower boundary of marginal credible band
+    post_median # Posterior median
+    post_qup # Upper boundary of marginal credible band
+    post_mean # Posterior mean of `s^2`
+    post_mean_root # Posterior mean of the `s
+    qu # `qu*100`-% marginal credible bands
+end
+```
+
+Struct holding posterior information for squared volatility `s^2`.
+"""
 struct Posterior
     post_qlow
     post_median
@@ -213,7 +272,16 @@ struct Posterior
     post_mean_root
     qu
 end
-function compute_posterior_s0(samples; burnin = size(samples, 2)÷3, quc = 0.90)
+
+"""
+    posterior_volatility(θs; burnin = size(θs, 2)÷3, quc = 0.90)
+
+Computes posterior `quc*100`-% marginal credible bands for square volatility `s^2` from `θ`.
+
+Returns `Posterior` object with boundaries of marginal credible band,
+posterior median and mean of `s^2` and posterior mean of `s`.
+"""
+function posterior_volatility(samples; burnin = size(samples, 2)÷3, quc = 0.90)
     p = 1.0 - quc 
     A = view(samples, :, burnin:size(samples, 2))
     post_qup = mapslices(v-> quantile(v, 1 - p/2), A, 2)
@@ -231,7 +299,21 @@ function compute_posterior_s0(samples; burnin = size(samples, 2)÷3, quc = 0.90)
     )
 end
 
+"""
+    piecewise(tt, yy, [endtime]) -> tt, xx
 
+If `(tt, yy)`` is a jump process with piecewise constant paths and jumps 
+of size `yy[i]-y[i-1]` at `tt[i]`, piecewise returns coordinates path 
+for plotting purposes. The second argument
+allows to choose the right endtime of the last interval.
+"""
+function piecewise(tt_, yy, tend = tt[end])
+    tt = [tt_[1]]
+    n = length(yy)
+    append!(tt, repeat(tt_[2:n], inner=2))
+    push!(tt, tend)
+    tt, repeat(yy, inner=2)
+end
 
 
 
