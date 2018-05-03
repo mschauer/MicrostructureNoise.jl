@@ -15,6 +15,8 @@ and { Vᵢ } denote unobservable stochastic disturbances.
 
 The prior is based on an inverse Gamma Markov chain prior on the squared volatility function and a Kalman filter reconstructing the latent signal.
 
+<img src="./heston.png" width=600>
+
 ## Documentation
 
 See [https://mschauer.github.io/MicrostructureNoise.jl/latest](https://mschauer.github.io/MicrostructureNoise.jl/latest).
