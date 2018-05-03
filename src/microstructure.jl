@@ -73,7 +73,7 @@ and `σα` is the stepsize for the random walk proposal for `α`.
 Prints verbose output every `printiter` iteration.
 
 Returns `θs, ηs, αs, pacc`,
-`ηs`, `αs`` are vectors of iterates,
+`ηs`, `αs` are vectors of iterates,
 possible subsampled at indices `subinds`,
 `θs` is a Matrix with iterates of `θ` rows.
 `paccα` is the acceptance probability for the update step of `α`.
@@ -302,7 +302,7 @@ end
 """
     piecewise(tt, yy, [endtime]) -> tt, xx
 
-If `(tt, yy)`` is a jump process with piecewise constant paths and jumps 
+If `(tt, yy)` is a jump process with piecewise constant paths and jumps 
 of size `yy[i]-y[i-1]` at `tt[i]`, piecewise returns coordinates path 
 for plotting purposes. The second argument
 allows to choose the right endtime of the last interval.
