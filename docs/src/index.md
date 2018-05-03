@@ -61,9 +61,9 @@ C0 = 5.0
 
 α = 0.3
 σα = 0.1
-θs, ηs, αs, p = MicrostructureNoise.MCMC(prior, tt, y, α, σα, 1500)
+td, θs, ηs, αs, p = MicrostructureNoise.MCMC(prior, tt, y, α, σα, 1500)
 
-posterior = MicrostructureNoise.posterior_volatility(θs)
+posterior = MicrostructureNoise.posterior_volatility(td, θs)
 ```
 
 ## Library

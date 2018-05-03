@@ -1,6 +1,6 @@
 module MicrostructureNoise
 
-using Bridge, Distributions
+using Distributions
 
 include("microstructure.jl")
 
