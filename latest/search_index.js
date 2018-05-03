@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "MicrostructureNoise.MCMC",
     "category": "function",
-    "text": "MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> θ, ηs, αs, pacc\n\nRun the Markov Chain Monte Carlo procedure for iterations iterations, on data (tt, yy), where tt are observation times and yy are observations, α0 is the initial guess for the smoothing parameter α (necessary), η0 is the iniat guess woth the noise covariance (optional), and σα is the stepsize for the random walk proposal for α.\n\nPrints verbose output every printiter iteration.\n\nReturns θs, ηs, αs, pacc, ηs, αs are vectors of iterates, possible subsampled at indices subinds, θs is a Matrix with iterates of θ rows. paccα is the acceptance probability for the update step of α.\n\nKeyword args fixalpha, fixeta when set to true allow fixing α and η at their initial values.\n\n\n\n"
+    "text": "MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> td, θ, ηs, αs, pacc\n\nRun the Markov Chain Monte Carlo procedure for iterations iterations, on data (tt, yy), where tt are observation times and yy are observations, α0 is the initial guess for the smoothing parameter α (necessary), η0 is the iniat guess woth the noise covariance (optional), and σα is the stepsize for the random walk proposal for α.\n\nPrints verbose output every printiter iteration.\n\nReturns td, θs, ηs, αs, pacc, td is the time grid of the bins, ηs, αs are vectors of iterates, possible subsampled at indices subinds, θs is a Matrix with iterates of θ rows. paccα is the acceptance probability for the update step of α.\n\nKeyword args fixalpha, fixeta when set to true allow fixing α and η at their initial values.\n\n\n\n"
 },
 
 {
@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "MicrostructureNoise.Posterior",
     "category": "type",
-    "text": "struct Posterior\n    post_qlow # Lower boundary of marginal credible band\n    post_median # Posterior median\n    post_qup # Upper boundary of marginal credible band\n    post_mean # Posterior mean of `s^2`\n    post_mean_root # Posterior mean of the `s\n    qu # `qu*100`-% marginal credible bands\nend\n\nStruct holding posterior information for squared volatility s^2.\n\n\n\n"
+    "text": "struct Posterior\n    post_t # Time grid of the bins\n    post_qlow # Lower boundary of marginal credible band\n    post_median # Posterior median\n    post_qup # Upper boundary of marginal credible band\n    post_mean # Posterior mean of `s^2`\n    post_mean_root # Posterior mean of the `s\n    qu # `qu*100`-% marginal credible bands\nend\n\nStruct holding posterior information for squared volatility s^2.\n\n\n\n"
 },
 
 {
@@ -53,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "MicrostructureNoise.posterior_volatility",
     "category": "function",
-    "text": "posterior_volatility(θs; burnin = size(θs, 2)÷3, quc = 0.90)\n\nComputes posterior quc*100-% marginal credible bands for square volatility s^2 from θ.\n\nReturns Posterior object with boundaries of marginal credible band, posterior median and mean of s^2 and posterior mean of s.\n\n\n\n"
+    "text": "posterior_volatility(td, θs; burnin = size(θs, 2)÷3, qu = 0.90)\n\nComputes posterior qu*100-% marginal credible bands for square volatility s^2 from θ.\n\nReturns Posterior object with boundaries of marginal credible band, posterior median and mean of s^2 and posterior mean of s.\n\n\n\n"
 },
 
 {
