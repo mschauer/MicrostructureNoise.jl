@@ -14,17 +14,17 @@ Pkg.clone("https://github.com/mschauer/MicrostructureNoise.jl.jl")
 
 ## Description
 
-MicrostructureNoise estimates the volatility function s of the stochastic differential equation
+MicrostructureNoise estimates the volatility function <a href="https://www.codecogs.com/eqnedit.php?latex=s" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s" title="s" /></a> of the stochastic differential equation
 
-    dXₜ = b(t,Xₜ) dt + s(t) dWₜ, X₀ = x₀, t ∈ [0,T] 
+<a href="https://www.codecogs.com/eqnedit.php?latex=dX_t&space;=&space;b(t,X_t)&space;dt&space;&plus;&space;s(t)&space;dW_t,&space;\quad&space;X_0&space;=&space;x_0,&space;\quad&space;t&space;∈&space;[0,T]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?dX_t&space;=&space;b(t,X_t)&space;dt&space;&plus;&space;s(t)&space;dW_t,&space;\quad&space;X_0&space;=&space;x_0,&space;\quad&space;t&space;∈&space;[0,T]" title="dX_t = b(t,X_t) dt + s(t) dW_t, \quad X_0 = x_0, \quad t ∈ [0,T]" /></a>
 
 from noisy observations of its solution
 
-    Yᵢ = X(tᵢ) + Vᵢ,   0 = t₀ < … < tₙ = T, 
+<a href="https://www.codecogs.com/eqnedit.php?latex=Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;=&space;t_&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," target="_blank"><img src="https://latex.codecogs.com/gif.latex?Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;=&space;t_&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," title="Y_i = X(t_i) + V_i, \quad 0 = t_ < \ldots < t_n = T," /></a>
 
-where { Vᵢ } denote unobservable stochastic disturbances. The method is minimalistic in its assumptions on the volatility function, which in particular can itself be a stochastic process.
+where <a href="https://www.codecogs.com/eqnedit.php?latex=\{V_i\}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\{V_i\}" title="\{V_i\}" /></a> denote unobservable stochastic disturbances. The method is minimalistic in its assumptions on the volatility function, which in particular can itself be a stochastic process.
 
-The estimation methodology is intuitive to understand, given that its ingredients are well-known statistical techniques. The posterior inference is performed via the Gibbs sampler, with the Forward Filtering Backward Simulation algorithm used to reconstruct unobservable states X(tᵢ). This relies on the Kalman filter. The unknown squared volatility function is a priori modelled as piecewise constant and is assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function. The picture below gives an idea of the results obtainable with the method. Depicted is a reconstruction of the volatility function from the synthetic data generated according to the classical Heston stochastic volatility model. Note that next to the point estimate (posterior mean plotted in black), the method conducts automatic uncertainty quantification via the marginal Bayesian credible band (plotted in blue).
+The estimation methodology is intuitive to understand, given that its ingredients are well-known statistical techniques. The posterior inference is performed via the Gibbs sampler, with the Forward Filtering Backward Simulation algorithm used to reconstruct unobservable states <a href="https://www.codecogs.com/eqnedit.php?latex=X(t_i)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X(t_i)" title="X(t_i)" /></a>. This relies on the Kalman filter. The unknown squared volatility function is a priori modelled as piecewise constant and is assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function. The picture below gives an idea of the results obtainable with the method. Depicted is a reconstruction of the volatility function from the synthetic data generated according to the classical Heston stochastic volatility model. Note that next to the point estimate (posterior mean plotted in black), the method conducts automatic uncertainty quantification via the marginal Bayesian credible band (plotted in blue).
 
 <img src="./heston.png" width=600>
 
