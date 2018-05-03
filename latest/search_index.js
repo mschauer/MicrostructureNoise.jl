@@ -85,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "References",
     "category": "section",
-    "text": "Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. Preprint, 2018."
+    "text": "With Frank van der Meulen, Shota Gugushvili, Peter Spreij: Nonparametric Bayesian volatility estimation. arxiv:1801.09956, 2018.\nShota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. In preparation."
 },
 
 ]}
