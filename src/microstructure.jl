@@ -62,7 +62,7 @@ struct Prior
 end
 
 """
-    MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> θ, ηs, αs, pacc
+    MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> td, θ, ηs, αs, pacc
 
 Run the Markov Chain Monte Carlo procedure for `iterations` iterations,
 on data `(tt, yy)`, where `tt` are observation times and `yy` are observations,
@@ -72,7 +72,8 @@ and `σα` is the stepsize for the random walk proposal for `α`.
 
 Prints verbose output every `printiter` iteration.
 
-Returns `θs, ηs, αs, pacc`,
+Returns `td, θs, ηs, αs, pacc`,
+`td` is the time grid of the bins,
 `ηs`, `αs` are vectors of iterates,
 possible subsampled at indices `subinds`,
 `θs` is a Matrix with iterates of `θ` rows.
@@ -120,7 +121,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
     Z = zeros(N)
     ii = Vector(N)
-    td = zeros(N)
+    td = zeros(N+1)
     for k in 1:N
         if k == N
             ii[k] = 1+(k-1)*m:n
@@ -133,6 +134,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
         θ[k] = mean(InverseGamma(α1 + length(ii[k])/2, β1 + Z[k]/2))
     end
+    td[end] = tt[end]
 
     acc = 0
     αs = Float64[]
@@ -247,12 +249,13 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         end
     end
 
-    samples, ηs, αs, round(acc/iterations, 3)
+    td, samples, ηs, αs, round(acc/iterations, 3)
 end
 
 """
 ```
 struct Posterior
+    post_t # Time grid of the bins
     post_qlow # Lower boundary of marginal credible band
     post_median # Posterior median
     post_qup # Upper boundary of marginal credible band
@@ -265,6 +268,7 @@ end
 Struct holding posterior information for squared volatility `s^2`.
 """
 struct Posterior
+    post_t
     post_qlow
     post_median
     post_qup
@@ -274,15 +278,15 @@ struct Posterior
 end
 
 """
-    posterior_volatility(θs; burnin = size(θs, 2)÷3, quc = 0.90)
+    posterior_volatility(td, θs; burnin = size(θs, 2)÷3, qu = 0.90)
 
-Computes posterior `quc*100`-% marginal credible bands for square volatility `s^2` from `θ`.
+Computes posterior `qu*100`-% marginal credible bands for square volatility `s^2` from `θ`.
 
 Returns `Posterior` object with boundaries of marginal credible band,
 posterior median and mean of `s^2` and posterior mean of `s`.
 """
-function posterior_volatility(samples; burnin = size(samples, 2)÷3, quc = 0.90)
-    p = 1.0 - quc 
+function posterior_volatility(td, samples; burnin = size(samples, 2)÷3, qu = 0.90)
+    p = 1.0 - qu 
     A = view(samples, :, burnin:size(samples, 2))
     post_qup = mapslices(v-> quantile(v, 1 - p/2), A, 2)
     post_mean = mean(A, 2)
@@ -290,12 +294,13 @@ function posterior_volatility(samples; burnin = size(samples, 2)÷3, quc = 0.90)
     post_median = median(A, 2)
     post_qlow = mapslices(v-> quantile(v,  p/2), A, 2)
     Posterior(
+        td,
         post_qlow,
         post_median,
         post_qup,
         post_mean,
         post_mean_root,
-        quc
+        qu
     )
 end
 
@@ -307,7 +312,7 @@ of size `yy[i]-y[i-1]` at `tt[i]`, piecewise returns coordinates path
 for plotting purposes. The second argument
 allows to choose the right endtime of the last interval.
 """
-function piecewise(tt_, yy, tend = tt[end])
+function piecewise(tt_, yy, tend = tt_[end])
     tt = [tt_[1]]
     n = length(yy)
     append!(tt, repeat(tt_[2:n], inner=2))
