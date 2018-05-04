@@ -35,6 +35,8 @@ The estimation methodology is intuitive to understand, given that its ingredient
 
 <img src="./heston.png" width=600>
 
+When <a href="https://www.codecogs.com/eqnedit.php?latex=X(t_i)" target="_blank"><img src="https://latex.codecogs.com/svg.latex?X(t_i)" title="X(t_i)" /></a> is observed without noise, an option (`fixeta`) allows to perfom inference as described in the reference "Nonparametric Bayesian volatility estimation".
+
 ## Documentation
 
 See [https://mschauer.github.io/MicrostructureNoise.jl/latest](https://mschauer.github.io/MicrostructureNoise.jl/latest).
