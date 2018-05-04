@@ -13,10 +13,10 @@ MicrostructureNoise is a Julia package for Bayesian volatility estimation in pre
 
 ## Installation
 
-Unregistered package. To install, run:
+To install, run:
 
 ```
-Pkg.clone("https://github.com/mschauer/MicrostructureNoise.jl.git", "MicrostructureNoise")
+Pkg.add("MicrostructureNoise")
 ```
 
 ## Description
@@ -34,6 +34,8 @@ where <a href="https://www.codecogs.com/eqnedit.php?latex=\{V_i\}" target="_blan
 The estimation methodology is intuitive to understand, given that its ingredients are well-known statistical techniques. The posterior inference is performed via the Gibbs sampler, with the Forward Filtering Backward Simulation algorithm used to reconstruct unobservable states <a href="https://www.codecogs.com/eqnedit.php?latex=X(t_i)" target="_blank"><img src="https://latex.codecogs.com/svg.latex?X(t_i)" title="X(t_i)" /></a>. This relies on the Kalman filter. The unknown squared volatility function is a priori modelled as piecewise constant and is assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function. The picture below gives an idea of the results obtainable with the method. Depicted is a reconstruction of the volatility function from the synthetic data generated according to the classical Heston stochastic volatility model (the unobserved true volatility curve is plotted in red). Note that next to the point estimate (posterior mean plotted in black), the method conducts automatic uncertainty quantification via the marginal Bayesian credible band (plotted in blue).
 
 <img src="./heston.png" width=600>
+
+When <a href="https://www.codecogs.com/eqnedit.php?latex=X(t_i)" target="_blank"><img src="https://latex.codecogs.com/svg.latex?X(t_i)" title="X(t_i)" /></a> is observed without noise, an option (`fixeta`) allows to perfom inference as described in the reference "Nonparametric Bayesian volatility estimation".
 
 ## Documentation
 
