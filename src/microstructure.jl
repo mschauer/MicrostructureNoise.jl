@@ -5,13 +5,13 @@
 
 Struct holding prior distribution parameters.
 `N` is the number of bins, 
-`InverseGamma(α1, β1)` is the prior of the first bin,
-the prior on the noise is `InverseGamma(αη, βη)`,
-the hidden state at start time is `Normal(μ0, C0)`, 
-and `Πα` is a prior `Distribution`` for `α`, 
+`InverseGamma(α1, β1)` is the prior of `θ[1]` on the first bin,
+the prior on the noise variance `η` is `InverseGamma(αη, βη)`,
+the hidden state $X_0$ at start time is `Normal(μ0, C0)`, 
+and `Πα` is a prior `Distribution` for `α`, 
 for example `Πα = LogNormal(1., 0.5)`.
 
-Note: All keywordargs `N, α1, β1, αη, βη, Πα, μ0, C0`
+Note: All keyword arguments `N, α1, β1, αη, βη, Πα, μ0, C0`
 are mandatory.
 
 
@@ -20,10 +20,10 @@ Example:
 prior = MicrostructureNoise.Prior(
 N = 40, # number of bins
 
-α1 = 0.0, # prior on first bin
+α1 = 0.0, # prior for the first bin
 β1 = 0.0,
 
-αη = 0.3, # noise prior InverseGamma(αη, βη)
+αη = 0.3, # noise variance prior InverseGamma(αη, βη)
 βη = 0.3,
 
 Πα = LogNormal(1., 0.5),
@@ -65,15 +65,15 @@ end
     MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> td, θ, ηs, αs, pacc
 
 Run the Markov Chain Monte Carlo procedure for `iterations` iterations,
-on data `(tt, yy)`, where `tt` are observation times and `yy` are observations,
+on data `(tt, yy)`, where `tt` are observation times and `yy` are observations.
 `α0` is the initial guess for the smoothing parameter `α` (necessary),
-`η0` is the iniat guess woth the noise covariance (optional),
+`η0` is the initial guess for the noise variance (optional),
 and `σα` is the stepsize for the random walk proposal for `α`.
 
 Prints verbose output every `printiter` iteration.
 
 Returns `td, θs, ηs, αs, pacc`,
-`td` is the time grid of the bins,
+`td` is the time grid of the bin boundaries,
 `ηs`, `αs` are vectors of iterates,
 possible subsampled at indices `subinds`,
 `θs` is a Matrix with iterates of `θ` rows.
@@ -260,8 +260,8 @@ struct Posterior
     post_median # Posterior median
     post_qup # Upper boundary of marginal credible band
     post_mean # Posterior mean of `s^2`
-    post_mean_root # Posterior mean of the `s
-    qu # `qu*100`-% marginal credible bands
+    post_mean_root # Posterior mean of `s`
+    qu # `qu*100`-% marginal credible band
 end
 ```
 
@@ -280,10 +280,10 @@ end
 """
     posterior_volatility(td, θs; burnin = size(θs, 2)÷3, qu = 0.90)
 
-Computes posterior `qu*100`-% marginal credible bands for square volatility `s^2` from `θ`.
+Computes the `qu*100`-% marginal credible band for squared volatility `s^2` from `θ`.
 
-Returns `Posterior` object with boundaries of marginal credible band,
-posterior median and mean of `s^2` and posterior mean of `s`.
+Returns `Posterior` object with boundaries of the marginal credible band,
+posterior median and mean of `s^2`, as well as posterior mean of `s`.
 """
 function posterior_volatility(td, samples; burnin = size(samples, 2)÷3, qu = 0.90)
     p = 1.0 - qu 
