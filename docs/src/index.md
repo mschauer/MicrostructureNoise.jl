@@ -1,35 +1,28 @@
 # MicrostructureNoise.jl
 
-A Julia package for Bayesian volatility estimation in presence of
-microstructure noise.
+MicrostructureNoise is a Julia package for Bayesian volatility estimation in presence of market microstructure noise. The underlying model is a stochastic differential equation 
 
-We take a nonparametric Bayesian approach to estimate the volatility in the stochastic differential equation model 
+$ dX_t=b(t,X_t)\,dt + s(t)\,d W_t, \quad X_0=x_0, \quad t\in [0,T] .$
 
-$ dX_t=b(t,X_t)\,dt + s(t)\,d W_t, \quad X_0=x_0, \quad t\in[0,T] $
+The estimation method is minimalistic in its assumptions on the volatility function $s$, which in particular can itself be a stochastic process. The process $X$ is latent: observed is its noisy version on a discrete time grid,
 
-from noisy discrete time observations of its solution
+$ Y_{i}=X_{t_{i}}+V_{i}, \quad 0=t_0<t_1<\cdots<t_n=T.$
 
-$ Y_{i}=X_{t_{i}}+V_{i}, \quad 0=t_0<t_1<\cdots<t_n=T, $
+Here $\{ V_i \}$ denote unobservable stochastic disturbances, and $n$ is the total number of observations.
 
-and $\{ V_i \}$ denote unobservable stochastic disturbances.
+For data $\{Y_i\}$ that are densely spaced in time, the drift function $b$ has little effect on estimation accuracy of the volatility function $s$, and can be set to zero. This reduces the original model to the linear state space model, and statistical tools developed for the latter can be used to infer the unknown volatility. The posterior inference is performed via the Gibbs sampler, and relies on the Kalman filtering ideas to reconstruct unobservable states $X(t_i)$. Essential details of the procedure are as follows: The unknown squared volatility function $s^2$ is a priori modelled as piecewise constant: Fix an integer $m<n$. Then we have a unique decomposition $n=mN+r$  with $0\leq r<m$, where $N=\lfloor {n}/{m}\rfloor$. Now define bins
 
+$B_k=[t_{m(k-1)},t_{mk})$, $k=1,\ldots,N-1$, and $B_N=[t_{m(N-1)},T]$.
 
-The prior is based on an inverse Gamma Markov chain prior on the squared volatility function and a Kalman filter reconstructing the latent signal.
-
-
-For the measurement error variance $\eta_v$, we use a (standard) prior specification $\eta_v \sim IG(\alpha_v,\beta_v)$. Fix an integer $m<n$. Then we have a unique decomposition $n=mN+r$  with $0\leq r<m$, where $N=\lfloor {n}/{m}\rfloor$. 
-
-Now define bins $B_k=[t_{m(k-1)},t_{mk})$, $k=1,\ldots,N-1$, and $B_N=[t_{m(N-1)},T]$.
-
-The number $N$ of bins is a hyperparameter of our prior. Let $s$ be piecewise constant on bins $B_k$, so that
+The number $N$ of bins is a hyperparameter. Let $s$ be piecewise constant on bins $B_k$, so that
 
 $ s^2=\sum_{k=1}^{N} \theta_k \mathbf{1}_{B_k}.$
 
-We use a Markov chain monte carlo procedure to sample from the joint posterior of the vector `\theta`, the noise level `\eta` and the smoothness hyperparameter `\alpha`.
+The coefficients `\theta` are assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function $s^2$. This prior is governed by the smoothness hyperparameter `\alpha`, which in turn is equipped with a hyperprior. The Bayesian model specification is completed by assigning the noise level `\eta` the inverse Gamma prior. To sample from the joint posterior of the vector `\theta`, the noise level `\eta` and the smoothness hyperparameter `\alpha`, the Gibbs sampler is used. In each cycle of the sampler, the unobservable state vector $\{X(t_i)\}$ is drawn from its full conditional distribution using the Forward Filtering Backward Simulation algorithm; this employs the Kalman filter recursions in the forward pass.
 
-The procedure incorporating a smoothness hyperparameter shows in a simulation study shows good adaptivity to the unkown smoothness of the volatility.
+Synthetic data examples show that the procedure adapts well to the unknown smoothness of the volatility $s$.
 
-See the referenced article for details of prior specification, implementation and numerical experiments.
+See the referenced article for additional details on prior specification, implementation, and numerical experiments.
 
 ## Example
 
