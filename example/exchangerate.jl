@@ -1,5 +1,5 @@
 
-using MicrostructureNoise, Distributions
+using MicrostructureNoise, Distributions, Plots
 # uncomment if you do not mind to create this large file 
 # Base.download("https://www.truefx.com/dev/data//2015/MARCH-2015/EURUSD-2015-03.zip","./data/EURUSD-2015-03.zip")
 # run(`unzip ./data/EURUSD-2015-03.zip -d ./data`)
@@ -29,3 +29,5 @@ C0 = 5.0
 td, θs, ηs, αs, p = MicrostructureNoise.MCMC(prior, tt, y, α, σα, 1500)
 
 posterior = MicrostructureNoise.posterior_volatility(td, θs)
+
+plot(MicrostructureNoise.piecewise(posterior.post_t, posterior.post_mean_root)..., label="Volatility estimate")
