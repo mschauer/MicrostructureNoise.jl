@@ -1,6 +1,6 @@
 # MicrostructureNoise.jl
 
-MicrostructureNoise is a Julia package for Bayesian volatility estimation in presence of market microstructure noise. The underlying model is a stochastic differential equation 
+`MicrostructureNoise` is a Julia package for Bayesian volatility estimation in presence of market microstructure noise. The underlying model is a stochastic differential equation 
 
 $ dX_t=b(t,X_t)\,dt + s(t)\,d W_t, \quad X_0=x_0, \quad t\in [0,T] .$
 
@@ -10,15 +10,12 @@ $ Y_{i}=X_{t_{i}}+V_{i}, \quad 0=t_0<t_1<\cdots<t_n=T.$
 
 Here $\{ V_i \}$ denote unobservable stochastic disturbances, and $n$ is the total number of observations.
 
-For data $\{Y_i\}$ that are densely spaced in time, the drift function $b$ has little effect on estimation accuracy of the volatility function $s$, and can be set to zero. This reduces the original model to the linear state space model, and statistical tools developed for the latter can be used to infer the unknown volatility. The posterior inference is performed via the Gibbs sampler, and relies on the Kalman filtering ideas to reconstruct unobservable states $X(t_i)$. Essential details of the procedure are as follows: The unknown squared volatility function $s^2$ is a priori modelled as piecewise constant: Fix an integer $m<n$. Then we have a unique decomposition $n=mN+r$  with $0\leq r<m$, where $N=\lfloor {n}/{m}\rfloor$. Now define bins
-
-$B_k=[t_{m(k-1)},t_{mk})$, $k=1,\ldots,N-1$, and $B_N=[t_{m(N-1)},T]$.
-
+For data $\{Y_i\}$ that are densely spaced in time, the drift function $b$ has little effect on estimation accuracy of the volatility function $s$, and can be set to zero. This reduces the original model to the linear state space model, and statistical tools developed for the latter can be used to infer the unknown volatility. The posterior inference is performed via the Gibbs sampler, and relies on the Kalman filtering ideas to reconstruct unobservable states $X(t_i)$. Essential details of the procedure are as follows: The unknown squared volatility function $s^2$ is a priori modelled as piecewise constant: Fix an integer $m<n$. Then we have a unique decomposition $n=mN+r$  with $0\leq r<m$, where $N=\lfloor {n}/{m}\rfloor$. Now define bins $B_k=[t_{m(k-1)},t_{mk})$, $k=1,\ldots,N-1$, and $B_N=[t_{m(N-1)},T]$.
 The number $N$ of bins is a hyperparameter. Let $s$ be piecewise constant on bins $B_k$, so that
 
 $ s^2=\sum_{k=1}^{N} \theta_k \mathbf{1}_{B_k}.$
 
-The coefficients `\theta` are assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function $s^2$. This prior is governed by the smoothness hyperparameter `\alpha`, which in turn is equipped with a hyperprior. The Bayesian model specification is completed by assigning the noise level `\eta` the inverse Gamma prior. To sample from the joint posterior of the vector `\theta`, the noise level `\eta` and the smoothness hyperparameter `\alpha`, the Gibbs sampler is used. In each cycle of the sampler, the unobservable state vector $\{X(t_i)\}$ is drawn from its full conditional distribution using the Forward Filtering Backward Simulation algorithm; this employs the Kalman filter recursions in the forward pass.
+The coefficients $\theta$ are assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function $s^2$. This prior is governed by the smoothness hyperparameter $\alpha$, which in turn is equipped with a hyperprior. The Bayesian model specification is completed by assigning the noise level $\eta$ the inverse Gamma prior. To sample from the joint posterior of the vector $\theta$, the noise level $\eta$ and the smoothness hyperparameter $\alpha$, the Gibbs sampler is used. In each cycle of the sampler, the unobservable state vector $\{X(t_i)\}$ is drawn from its full conditional distribution using the Forward Filtering Backward Simulation algorithm; this employs the Kalman filter recursions in the forward pass.
 
 Synthetic data examples show that the procedure adapts well to the unknown smoothness of the volatility $s$.
 
