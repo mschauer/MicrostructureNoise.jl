@@ -7,7 +7,7 @@ Struct holding prior distribution parameters.
 `N` is the number of bins, 
 `InverseGamma(α1, β1)` is the prior of `θ[1]` on the first bin,
 the prior on the noise variance `η` is `InverseGamma(αη, βη)`,
-the hidden state $X_0$ at start time is `Normal(μ0, C0)`, 
+the hidden state ``X_0`` at start time is `Normal(μ0, C0)`, 
 and `Πα` is a prior `Distribution` for `α`, 
 for example `Πα = LogNormal(1., 0.5)`.
 
