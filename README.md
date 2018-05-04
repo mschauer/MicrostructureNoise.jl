@@ -13,10 +13,10 @@ MicrostructureNoise is a Julia package for Bayesian volatility estimation in pre
 
 ## Installation
 
-Unregistered package. To install, run:
+To install, run:
 
 ```
-Pkg.clone("https://github.com/mschauer/MicrostructureNoise.jl.git", "MicrostructureNoise")
+Pkg.add("MicrostructureNoise")
 ```
 
 ## Description
