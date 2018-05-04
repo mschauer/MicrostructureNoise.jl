@@ -151,8 +151,10 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
     for iter in 1:iterations
         # update Zk (necessary because x changes)
-        for k in 1:N
-            Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
+        if !(eta == 0.0 && fixeta)
+            for k in 1:N
+                Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
+            end
         end
 
         # sample chain
@@ -205,40 +207,43 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         # Sample x from Kalman smoothing distribution
 
         # Forward pass
+        if eta == 0.0 && fixeta
+            # do nothing
+        else 
+            C[1] = C0
+            μ[1] = μ0
+            μi = μ0
+            Ci = C0
+            for k in 1:N
+                iik = ii[k]
+                for i in iik # from 1 to n
+                    wi = θ[k]*(tt[i+1] - tt[i])
+                    Ki = (Ci + wi)/(Ci + wi + η) # Ci is still C(i-1)
+                    μi =  μi + Ki*(y[i+1] - μi)
 
-        C[1] = C0
-        μ[1] = μ0
-        μi = μ0
-        Ci = C0
-        for k in 1:N
-            iik = ii[k]
-            for i in iik # from 1 to n
-                wi = θ[k]*(tt[i+1] - tt[i])
-                Ki = (Ci + wi)/(Ci + wi + η) # Ci is still C(i-1)
-                μi =  μi + Ki*(y[i+1] - μi)
-
-                Ci = Ki*η
-                C[i+1] = Ci # C0 is at C[1], Cn is at C[n+1] etc.
-                μ[i+1] = μi
+                    Ci = Ki*η
+                    C[i+1] = Ci # C0 is at C[1], Cn is at C[n+1] etc.
+                    μ[i+1] = μi
+                end
             end
-        end
-        hi = μi
-        Hi = Ci
+            hi = μi
+            Hi = Ci
 
-        # Backward pass
-        x[end] = rand(Normal(hi, sqrt(Hi)))
+            # Backward pass
+            x[end] = rand(Normal(hi, sqrt(Hi)))
 
-        for k in N:-1:1
-            iik = ii[k]
-            for i in iik[end]:-1:iik[1] # n to 1
-                wi1 = θ[k]*(tt[i+1] - tt[i])
-                Ci = C[i]
-                μi = μ[i]
+            for k in N:-1:1
+                iik = ii[k]
+                for i in iik[end]:-1:iik[1] # n to 1
+                    wi1 = θ[k]*(tt[i+1] - tt[i])
+                    Ci = C[i]
+                    μi = μ[i]
 
 
-                Hi = (Ci*wi1)/(Ci + wi1)
-                hi = μi + Ci/(Ci + wi1)*(x[i+1] - μi) # x[i+1] was sampled in previous step
-                x[i] = rand(Normal(hi, sqrt(Hi)))
+                    Hi = (Ci*wi1)/(Ci + wi1)
+                    hi = μi + Ci/(Ci + wi1)*(x[i+1] - μi) # x[i+1] was sampled in previous step
+                    x[i] = rand(Normal(hi, sqrt(Hi)))
+                end
             end
         end
         if iter in subinds
