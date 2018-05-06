@@ -1,6 +1,6 @@
 # MicrostructureNoise.jl
 
-`MicrostructureNoise` is a Julia package for Bayesian volatility estimation in presence of the market microstructure noise. The underlying model is the stochastic differential equation 
+`MicrostructureNoise` is a Julia package for Bayesian volatility estimation in presence of market microstructure noise. The underlying model is the stochastic differential equation 
 
 $ dX_t=b(t,X_t)\,dt + s(t)\,d W_t, \quad X_0=x_0, \quad t\in [0,T] .$
 
