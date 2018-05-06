@@ -120,11 +120,11 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
 
     Z = zeros(N)
-    ii = Vector(N)
+    ii = Vector(N) # vector of start indices of increments
     td = zeros(N+1)
     for k in 1:N
         if k == N
-            ii[k] = 1+(k-1)*m:n
+            ii[k] = 1+(k-1)*m:n # sic!
         else
             ii[k] = 1+(k-1)*m:(k)*m
         end
