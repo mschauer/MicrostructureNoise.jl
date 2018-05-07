@@ -27,7 +27,7 @@ MicrostructureNoise estimates the volatility function <a href="https://www.codec
 
 from noisy observations of its solution
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;=&space;t_0&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," target="_blank"><img src="https://latex.codecogs.com/svg.latex?Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;=&space;t_0&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," title="Y_i = X(t_i) + V_i, \quad 0 = t_0 < \ldots < t_n = T," /></a>
+<a href="https://www.codecogs.com/eqnedit.php?latex=Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;<&space;t_1&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," target="_blank"><img src="https://latex.codecogs.com/gif.latex?Y_i&space;=&space;X(t_i)&space;&plus;&space;V_i,&space;\quad&space;0&space;<&space;t_1&space;<&space;\ldots&space;<&space;t_n&space;=&space;T," title="Y_i = X(t_i) + V_i, \quad 0 < t_1 < \ldots < t_n = T," /></a>
 
 where <a href="https://www.codecogs.com/eqnedit.php?latex=\{V_i\}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\{V_i\}" title="\{V_i\}" /></a> denote unobservable stochastic disturbances. The method is minimalistic in its assumptions on the volatility function, which in particular can itself be a stochastic process.
 
