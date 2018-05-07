@@ -6,7 +6,7 @@ $ dX_t=b(t,X_t)\,dt + s(t)\,d W_t, \quad X_0=x_0, \quad t\in [0,T] .$
 
 The estimation method is minimalistic in its assumptions on the volatility function $s$, which in particular can be a stochastic process. The process $X$ is latent: observed is its noisy version on a discrete time grid,
 
-$ Y_{i}=X_{t_{i}}+V_{i}, \quad 0=t_0<t_1<\cdots<t_n=T.$
+$ Y_{i}=X_{t_{i}}+V_{i}, \quad 0<t_1<\cdots<t_n=T.$
 
 Here $\{ V_i \}$ denote unobservable stochastic disturbances, and $n$ is the total number of observations.
 
