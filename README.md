@@ -9,7 +9,7 @@
 
 ## Overview
 
-MicrostructureNoise is a Julia package for Bayesian volatility estimation in presence of market microstructure noise.
+MicrostructureNoise is a [Julia](https://github.com/JuliaLang/julia) package for Bayesian volatility estimation in presence of market microstructure noise.
 
 ## Installation
 
