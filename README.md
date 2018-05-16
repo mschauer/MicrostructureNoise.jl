@@ -48,4 +48,4 @@ See [issue #1 (Roadmap/Contribution)](https://github.com/mschauer/Microstructure
 
 * Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. [arxiv:1801.09956](https://arxiv.org/abs/1801.09956), 2018.
 
-* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. In preparation.
+* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. [arxiv:1805.05606](https://arxiv.org/abs/1805.05606), 2018.
