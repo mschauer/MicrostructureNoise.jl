@@ -208,10 +208,14 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         if η == 0.0 && fixeta
             # do nothing
         else 
-            C[1] = C0
-            μ[1] = μ0
-            μi = μ0
-            Ci = C0
+            wi = 0.0 
+            Ki = C0/(C0 + η)
+            μi =  μ0 + Ki*(y[1] - μ0)
+
+            Ci = Ki*η
+            C[1] = Ci
+            μ[1] = μi
+
             for k in 1:N
                 iik = ii[k]
                 for i in iik # from 1 to n
