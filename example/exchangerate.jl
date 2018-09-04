@@ -1,9 +1,12 @@
 
-using MicrostructureNoise, Distributions, Plots
+using MicrostructureNoise, Distributions
+using Plots
+
+using Statistics, DelimitedFiles, Dates
 # uncomment if you do not mind to create this large file 
 # Base.download("https://www.truefx.com/dev/data//2015/MARCH-2015/EURUSD-2015-03.zip","./data/EURUSD-2015-03.zip")
 # run(`unzip ./data/EURUSD-2015-03.zip -d ./data`)
-dat = readcsv("./data/EURUSD-2015-03.csv")
+dat = readdlm("./data/EURUSD-2015-03.csv", ',')
 times = map(a -> DateTime(a, "yyyymmdd H:M:S.s"), dat[1:10:130260,2])
 tt = Float64[1/1000*(times[i].instant.periods.value-times[1].instant.periods.value) for i in 1:length(times)]
 n = length(tt)-1
