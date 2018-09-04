@@ -30,6 +30,21 @@ C0 = 5.0
 σα = 0.1
 td, θs, ηs, αs, p = MicrostructureNoise.MCMC(prior, tt, y, α, σα, 1500)
 
+@test_throws DimensionMismatch MicrostructureNoise.MCMC(prior, tt, y[2:end], α, σα, 10) 
+
+
+@testset "skipfirst" begin
+    @test_logs (:info, "skip observation y[1] at t[1] (skipfirst == true)") MicrostructureNoise.MCMC(prior, tt, y, α, σα, 10; skipfirst = true)
+    @test_throws DimensionMismatch MicrostructureNoise.MCMC(prior, tt, y[3:end], α, σα, 10; skipfirst = true) 
+
+    Random.seed!(10)
+    p1 = MicrostructureNoise.MCMC(prior, tt, [y[2];y[2:end]], α, σα, 10; skipfirst = true)
+    Random.seed!(10)
+    p2 = MicrostructureNoise.MCMC(prior, tt, y[2:end], α, σα, 10; skipfirst = true)
+    @test p1[1] == p2[1]
+    @test p1[2][end] == p2[2][end]
+end
+
 posterior = MicrostructureNoise.posterior_volatility(td, θs)
 
 # plot(MicrostructureNoise.piecewise(posterior.post_t[1:end], posterior.post_mean_root[1:end])...)

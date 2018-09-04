@@ -62,10 +62,12 @@ struct Prior
 end
 
 """
-    MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -> td, θ, ηs, αs, pacc
+    MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; 
+        subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100,
+        fixalpha = false, fixeta = false, skipfirst = false) -> td, θ, ηs, αs, pacc
 
 Run the Markov Chain Monte Carlo procedure for `iterations` iterations,
-on data `(tt, yy)`, where `tt` are observation times and `yy` are observations.
+on data `(t, y)`, where `t` are observation times and `y` are observations.
 `α0` is the initial guess for the smoothing parameter `α` (necessary),
 `η0` is the initial guess for the noise variance (optional),
 and `σα` is the stepsize for the random walk proposal for `α`.
@@ -79,10 +81,19 @@ possible subsampled at indices `subinds`,
 `θs` is a Matrix with iterates of `θ` rows.
 `paccα` is the acceptance probability for the update step of `α`.
 
+`y[i]` is the observation at `t[i]`.
+
+If `skipfirst = true` and `t` and `y` are of equal length,
+the observation `y[1]` (corresponding to `t[1]`) is ignored.
+
+If `skipfirst = true` and `length(t) = length(y) + 1`, 
+`y[i]` is the observation at `t[i + 1]`.
+
 Keyword args `fixalpha`, `fixeta` when set to `true` allow fixing
-`α` and `η` at their initial values.
+`α` and `η` at their initial values. 
 """
-function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100, fixalpha = false, fixeta = false)
+function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100, 
+    fixalpha = false, fixeta = false, skipfirst = false)
     
     N = Π.N
 
@@ -97,8 +108,21 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
     Πx0 = Normal(μ0, sqrt(C0))
  
+    if skipfirst
+        if length(t) == length(y)
+            shift = 0
+            @info "skip observation y[1] at t[1] (skipfirst == true)"
+        elseif length(t) == length(y) + 1
+            shift = 1
+        else
+            throw(DimensionMismatch("expected length(t) or length(t) - 1 observations (skipfirst == true)"))   
+        end      
+    else
+        length(t) != length(y) && throw(DimensionMismatch("expected length(t) observations"))   
+        shift = 0
+    end
 
-    n = length(y) - 1
+    n = length(t) - 1 # number of increments  
     
     N = Π.N
     m = n ÷ N
@@ -109,8 +133,11 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
 
     # Initialization
-
-    x = copy(y)
+    if shift == 1
+        x = [y[1]; y]
+    else
+        x = copy(y)
+    end
     η = η0
     α = α0
 
@@ -129,12 +156,12 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
             ii[k] = 1+(k-1)*m:(k)*m
         end
 
-        tk = tt[ii[k]]
+        tk = t[ii[k]]
         td[k] = tk[1]
-        Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
+        Z[k] = sum((x[i+1] - x[i]).^2 ./ (t[i+1]-t[i]) for i in ii[k])
         θ[k] = mean(InverseGamma(α1 + length(ii[k])/2, β1 + Z[k]/2))
     end
-    td[end] = tt[end]
+    td[end] = t[end]
 
     acc = 0
     αs = Float64[]
@@ -151,7 +178,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         # update Zk (necessary because x changes)
         if !(η == 0.0 && fixeta)
             for k in 1:N
-                Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
+                Z[k] = sum((x[i+1] - x[i]).^2 ./ (t[i+1]-t[i]) for i in ii[k])
             end
         end
 
@@ -192,8 +219,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         end
         if !fixeta
             # update eta
-            @assert(length(x) == n + 1)
-            z = sum((x[i] - y[i])^2 for i in 2:(n+1))
+            z = sum((x[i] - y[i - shift])^2 for i in (1 + skipfirst):(n+1))
             η = rand(InverseGamma(αη + n/2, βη + z/2))
 
             mod(iter, printiter) == 0 && print("\t √η", √(η))
@@ -208,16 +234,26 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         if η == 0.0 && fixeta
             # do nothing
         else 
-            C[1] = C0
-            μ[1] = μ0
-            μi = μ0
-            Ci = C0
+            if skipfirst # ignore observation y[1]
+                C[1] = C0
+                μ[1] = μ0
+                μi = μ0
+                Ci = C0
+            else
+                wi = 0.0 
+                Ki = C0/(C0 + η)
+                μi =  μ0 + Ki*(y[1] - μ0) # shift = 0
+   
+                Ci = Ki*η
+                C[1] = Ci
+                μ[1] = μi
+            end
             for k in 1:N
                 iik = ii[k]
                 for i in iik # from 1 to n
-                    wi = θ[k]*(tt[i+1] - tt[i])
+                    wi = θ[k]*(t[i+1] - t[i])
                     Ki = (Ci + wi)/(Ci + wi + η) # Ci is still C(i-1)
-                    μi =  μi + Ki*(y[i+1] - μi)
+                    μi =  μi + Ki*(y[i + 1 - shift] - μi)
 
                     Ci = Ki*η
                     C[i+1] = Ci # C0 is at C[1], Cn is at C[n+1] etc.
@@ -233,7 +269,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
             for k in N:-1:1
                 iik = ii[k]
                 for i in iik[end]:-1:iik[1] # n to 1
-                    wi1 = θ[k]*(tt[i+1] - tt[i])
+                    wi1 = θ[k]*(t[i+1] - t[i])
                     Ci = C[i]
                     μi = μ[i]
 
@@ -308,19 +344,19 @@ function posterior_volatility(td, samples; burnin = size(samples, 2)÷3, qu = 0.
 end
 
 """
-    piecewise(tt, yy, [endtime]) -> tt, xx
+    piecewise(t, y, [endtime]) -> t, xx
 
-If `(tt, yy)` is a jump process with piecewise constant paths and jumps 
-of size `yy[i]-y[i-1]` at `tt[i]`, piecewise returns coordinates path 
+If `(t, y)` is a jump process with piecewise constant paths and jumps 
+of size `y[i]-y[i-1]` at `t[i]`, piecewise returns coordinates path 
 for plotting purposes. The second argument
 allows to choose the right endtime of the last interval.
 """
-function piecewise(tt_, yy, tend = tt_[end])
-    tt = [tt_[1]]
-    n = length(yy)
-    append!(tt, repeat(tt_[2:n], inner=2))
-    push!(tt, tend)
-    tt, repeat(yy, inner=2)
+function piecewise(t_, y, tend = t_[end])
+    t = [t_[1]]
+    n = length(y)
+    append!(t, repeat(t_[2:n], inner=2))
+    push!(t, tend)
+    t, repeat(y, inner=2)
 end
 
 
