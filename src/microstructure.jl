@@ -334,11 +334,11 @@ function posterior_volatility(td, samples; burnin = size(samples, 2)÷3, qu = 0.
     post_qlow = mapslices(v-> quantile(v,  p/2), A, dims=2)
     Posterior(
         td,
-        post_qlow,
-        post_median,
-        post_qup,
-        post_mean,
-        post_mean_root,
+        post_qlow[:],
+        post_median[:],
+        post_qup[:],
+        post_mean[:],
+        post_mean_root[:],
         qu
     )
 end
