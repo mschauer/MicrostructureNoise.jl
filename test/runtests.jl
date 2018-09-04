@@ -1,5 +1,5 @@
 using MicrostructureNoise
-using Base.Test
+using Test
 
 include("smoketest.jl")
 include("piecewise.jl")

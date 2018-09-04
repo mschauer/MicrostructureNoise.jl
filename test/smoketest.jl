@@ -1,5 +1,8 @@
-using MicrostructureNoise, Distributions, Base.Test
-srand(10)
+using MicrostructureNoise, Distributions
+
+using Random, LinearAlgebra
+
+Random.seed!(10)
 η = 0.01
 
 n = 1000
@@ -35,4 +38,4 @@ posterior = MicrostructureNoise.posterior_volatility(td, θs)
 # Test posterior mean versus truth
 
 @test abs(mean(ηs)-η) < 0.2*η
-@test norm(diff(td).*(mean(θs,2) - σ.(td[1:end-1]).^2)) < 1
+@test norm(diff(td).*(mean(θs, dims=2) - σ.(td[1:end-1]).^2)) < 1

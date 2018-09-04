@@ -1,6 +1,8 @@
 module MicrostructureNoise
 
-using Distributions
+using SpecialFunctions, Distributions
+
+using Statistics
 
 include("microstructure.jl")
 
