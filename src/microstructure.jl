@@ -120,7 +120,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
 
     Z = zeros(N)
-    ii = Vector(N) # vector of start indices of increments
+    ii = Vector(undef, N) # vector of start indices of increments
     td = zeros(N+1)
     for k in 1:N
         if k == N
@@ -139,9 +139,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
     acc = 0
     αs = Float64[]
     si = 1
-    fixalpha = false
-    fixeta = false
-
+ 
     μ = zeros(n+1)
     C = zeros(n+1)
     θs = Any[]
@@ -151,7 +149,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
 
     for iter in 1:iterations
         # update Zk (necessary because x changes)
-        if !(eta == 0.0 && fixeta)
+        if !(η == 0.0 && fixeta)
             for k in 1:N
                 Z[k] = sum((x[i+1] - x[i]).^2 ./ (tt[i+1]-tt[i]) for i in ii[k])
             end
@@ -194,7 +192,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         end
         if !fixeta
             # update eta
-            assert(length(x) == n + 1)
+            @assert(length(x) == n + 1)
             z = sum((x[i] - y[i])^2 for i in 2:(n+1))
             η = rand(InverseGamma(αη + n/2, βη + z/2))
 
@@ -207,7 +205,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         # Sample x from Kalman smoothing distribution
 
         # Forward pass
-        if eta == 0.0 && fixeta
+        if η == 0.0 && fixeta
             # do nothing
         else 
             C[1] = C0
@@ -254,7 +252,7 @@ function MCMC(Π::Union{Prior,Dict}, tt, y, α0::Float64, σα, iterations; subi
         end
     end
 
-    td, samples, ηs, αs, round(acc/iterations, 3)
+    td, samples, ηs, αs, round(acc/iterations, digits=3)
 end
 
 """
@@ -293,11 +291,11 @@ posterior median and mean of `s^2`, as well as posterior mean of `s`.
 function posterior_volatility(td, samples; burnin = size(samples, 2)÷3, qu = 0.90)
     p = 1.0 - qu 
     A = view(samples, :, burnin:size(samples, 2))
-    post_qup = mapslices(v-> quantile(v, 1 - p/2), A, 2)
-    post_mean = mean(A, 2)
-    post_mean_root = mean(sqrt.(A), 2)
-    post_median = median(A, 2)
-    post_qlow = mapslices(v-> quantile(v,  p/2), A, 2)
+    post_qup = mapslices(v-> quantile(v, 1 - p/2), A, dims=2)
+    post_mean = mean(A, dims=2)
+    post_mean_root = mean(sqrt.(A), dims=2)
+    post_median = median(A, dims=2)
+    post_qlow = mapslices(v-> quantile(v,  p/2), A, dims=2)
     Posterior(
         td,
         post_qlow,
