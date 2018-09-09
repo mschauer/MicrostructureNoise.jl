@@ -125,7 +125,7 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
     n = length(t) - 1 # number of increments  
     
     N = Π.N
-    m = n ÷ N
+    m, r = divrem(n, N)
     
 
 
@@ -148,13 +148,16 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
 
     Z = zeros(N)
     ii = Vector(undef, N) # vector of start indices of increments
-    td = zeros(N+1)
+    td = zeros(N + 1)
+    l = 0
     for k in 1:N
+        l2 = l + m + (k ≤ r) #  r of the bins have size m + 1
         if k == N
-            ii[k] = 1+(k-1)*m:n # sic!
-        else
-            ii[k] = 1+(k-1)*m:(k)*m
+            @assert(l2 == n)
         end
+           
+        ii[k] = l+1:l2
+        l = l2
 
         tk = t[ii[k]]
         td[k] = tk[1]
@@ -175,6 +178,8 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
     samples = zeros(N, length(subinds))
 
     for iter in 1:iterations
+        mod(iter, printiter) == 0 && print("$iter ")
+
         # update Zk (necessary because x changes)
         if !(η == 0.0 && fixeta)
             for k in 1:N
@@ -187,9 +192,9 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
             ζ[k] = rand(InverseGamma(α + α, (α/θ[k] + α/θ[k+1])))
         end
         for k in 2:N-1
-            θ[k] = rand(InverseGamma(α + α + m/2, (α/ζ[k-1] + α/ζ[k] + Z[k]/2)))
+            θ[k] = rand(InverseGamma(α + α + length(ii[k])/2, (α/ζ[k-1] + α/ζ[k] + Z[k]/2)))
         end
-        θ[1] = rand(InverseGamma(α1 + α + m/2, β1 + α/ζ[1] + Z[1]/2))
+        θ[1] = rand(InverseGamma(α1 + α + length(ii[1])/2, β1 + α/ζ[1] + Z[1]/2))
         θ[N] = rand(InverseGamma(α + length(ii[N])/2, α/ζ[N-1] + Z[N]/2))
    
         if !fixalpha
@@ -208,7 +213,7 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
             lq˚ += (2*(N-1))*(α˚*log(α˚) - lgamma(α˚))
             lq˚ += -α˚*s
 
-            mod(iter, printiter) == 0 && print("$iter \t α ", α˚)
+            mod(iter, printiter) == 0 && print("\t α ", α˚)
             if rand() < exp(lq˚ - lq)*cdf(Normal(0, σα), α)/cdf(Normal(0, σα), α˚) # correct for support
                 acc = acc + 1
                 α = α˚
@@ -222,7 +227,7 @@ function MCMC(Π::Union{Prior,Dict}, t, y, α0::Float64, σα, iterations; subin
             z = sum((x[i] - y[i - shift])^2 for i in (1 + skipfirst):(n+1))
             η = rand(InverseGamma(αη + n/2, βη + z/2))
 
-            mod(iter, printiter) == 0 && print("\t √η", √(η))
+            mod(iter, printiter) == 0 && print("\t √η ", √(η))
 
 
         end
