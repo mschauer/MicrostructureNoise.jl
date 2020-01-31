@@ -3,6 +3,7 @@
 [![codecov.io](http://codecov.io/github/mschauer/MicrostructureNoise.jl/coverage.svg?branch=master)](http://codecov.io/github/mschauer/MicrostructureNoise.jl?branch=master)
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://mschauer.github.io/MicrostructureNoise.jl/latest/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1241011.svg)](https://doi.org/10.5281/zenodo.1241011)
+[![arXiv article](https://img.shields.io/badge/article-arXiv%3A1805.05606-B31B1B)](https://arxiv.org/abs/1805.05606)
 
 
 # MicrostructureNoise
@@ -46,7 +47,7 @@ See [issue #1 (Roadmap/Contribution)](https://github.com/mschauer/Microstructure
 
 ## References
 
-* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. [arxiv:1801.09956](https://arxiv.org/abs/1801.09956), 2018.
+* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. [arxiv:1801.09956](https://arxiv.org/abs/1801.09956), *Brazilian Journal of Probability*, to appear, 2020.
 
 * Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. [arxiv:1805.05606](https://arxiv.org/abs/1805.05606), 2018.
 
