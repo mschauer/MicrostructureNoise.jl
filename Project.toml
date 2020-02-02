@@ -1,0 +1,21 @@
+name = "MicrostructureNoise"
+uuid = "47737169-82b5-5dea-8d33-5707f53e1c0c"
+authors = ["Shota Gugushvili", "mschauer <moritzschauer@web.de>"]
+repo = "https://github.com/mschauer/MicrostructureNoise.jl.git"
+version = "0.11.0"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[compat]
+Distributions = "0.22"
+SpecialFunctions = "0.8"
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
