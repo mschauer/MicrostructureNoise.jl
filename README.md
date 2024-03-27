@@ -47,8 +47,8 @@ See [issue #1 (Roadmap/Contribution)](https://github.com/mschauer/Microstructure
 
 ## References
 
-* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. In de Gier, J., Praeger, C. E., and Tao, T. (editors), *2017 MATRIX Annals*, pages 279–302, Cham, 2019. Springer International Publishing. [doi: 10.1007/978-3-030-04161-8_19](https://doi.org/10.1007/978-3-030-04161-8_19)
+* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. In: de Gier, J., Praeger, C. E., and Tao, T. (editors), *2017 MATRIX Annals*, pages 279–302, Cham, 2019. Springer International Publishing. [doi: 10.1007/978-3-030-04161-8_19](https://doi.org/10.1007/978-3-030-04161-8_19)
 
 * Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. *Jpn. J. Stat. Data Sci.*, 6: 551–571, 2023. [doi: 10.1007/s42081-022-00185-9](https://doi.org/10.1007/s42081-022-00185-9)
 
-* A. T. Cemgil and O. Dikmen: Conjugate gamma Markov random fields for modelling nonstationary sources. In *ICA 2007, 7th International Conference on Independent Component Analysis and Signal Separation*, September 2007.
+* A. Taylan Cemgil and Onur Dikmen: Conjugate gamma Markov random fields for modelling nonstationary sources. In: Davies, M.E., James, C.J., Abdallah, S.A., Plumbley, M.D. (editors), *Independent Component Analysis and Signal Separation. ICA 2007*. Lecture Notes in Computer Science, vol 4666. Springer, Berlin, Heidelberg. [doi: 10.1007/978-3-540-74494-8_87](https://doi.org/10.1007/978-3-540-74494-8_87)
