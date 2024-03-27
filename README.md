@@ -47,8 +47,8 @@ See [issue #1 (Roadmap/Contribution)](https://github.com/mschauer/Microstructure
 
 ## References
 
-* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. [arxiv:1801.09956](https://arxiv.org/abs/1801.09956), *Brazilian Journal of Probability*, to appear, 2020.
+* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. In de Gier, J., Praeger, C. E., and Tao, T. (editors), *2017 MATRIX Annals*, pages 279–302, Cham, 2019. Springer International Publishing. [doi: 10.1007/978-3-030-04161-8_19](https://doi.org/10.1007/978-3-030-04161-8_19)
 
-* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. [arxiv:1805.05606](https://arxiv.org/abs/1805.05606), 2018.
+* Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. *Jpn. J. Stat. Data Sci.*, 6: 551–571, 2023. [doi: 10.1007/s42081-022-00185-9](https://doi.org/10.1007/s42081-022-00185-9)
 
-* A. T. Cemgil and O. Dikmen: Conjugate gamma Markov random fields for modelling nonstationary sources. In ICA 2007, 7th International Conference on Independent Component Analysis and Signal Separation, September 2007.
+* A. T. Cemgil and O. Dikmen: Conjugate gamma Markov random fields for modelling nonstationary sources. In *ICA 2007, 7th International Conference on Independent Component Analysis and Signal Separation*, September 2007.
