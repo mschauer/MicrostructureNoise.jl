@@ -66,6 +66,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using AutoBayes
-          DocMeta.setdocmeta!(AutoBayes, :DocTestSetup, :(using AutoBayes); recursive=true)
-          doctest(AutoBayes)
+          using MicrostructureNoise
+          DocMeta.setdocmeta!(MicrostructureNoise, :DocTestSetup, :(using MicrostructureNoise); recursive=true)
+          doctest(MicrostructureNoise)
