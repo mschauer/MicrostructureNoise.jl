@@ -1,25 +1,22 @@
 using Documenter
 using MicrostructureNoise
+DocMeta.setdocmeta!(MicrostructureNoise, :DocTestSetup, :(using MicrostructureNoise); recursive=true)
 
-makedocs(
-    modules = [MicrostructureNoise],
-    format = :html,
-    sitename = "MicrostructureNoise.jl",
-    authors = "Moritz Schauer and contributors",
-    pages = Any[ 
+makedocs(;
+    modules=[MicrostructureNoise],
+    authors="mschauer <moritzschauer@web.de> and contributors",
+    sitename="MicrostructureNoise.jl",
+    format=Documenter.HTML(;
+        canonical="https://mschauer.github.io/MicrostructureNoise.jl",
+        edit_link="main",
+        assets=String[],
+    ),
+    pages=[
         "Home" => "index.md",
-#        "Manual" => "manual.md",
-#        "Library" => "library.md",
-        ],
+    ],
 )
 
-# Documenter can also automatically deploy documentation to gh-pages.
-# See "Hosting Documentation" and deploydocs() in the Documenter manual
-# for more information.
-deploydocs(
-    repo = "github.com/mschauer/MicrostructureNoise.jl.git",
-    julia  = "0.7",
-    target = "build",
-    deps = nothing,
-    make = nothing,
+deploydocs(;
+    repo="github.com/mschauer/MicrostructureNoise.jl",
+    devbranch="main",
 )
