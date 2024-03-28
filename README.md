@@ -1,6 +1,3 @@
-[![Build Status](https://travis-ci.org/mschauer/MicrostructureNoise.jl.svg?branch=master)](https://travis-ci.org/mschauer/MicrostructureNoise.jl)
-[![Coverage Status](https://coveralls.io/repos/github/mschauer/MicrostructureNoise.jl/badge.svg?branch=master)](https://coveralls.io/github/mschauer/MicrostructureNoise.jl?branch=master)
-[![codecov.io](http://codecov.io/github/mschauer/MicrostructureNoise.jl/coverage.svg?branch=master)](http://codecov.io/github/mschauer/MicrostructureNoise.jl?branch=master)
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://mschauer.github.io/MicrostructureNoise.jl/latest/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1241011.svg)](https://doi.org/10.5281/zenodo.1241011)
 [![arXiv article](https://img.shields.io/badge/article-arXiv%3A1805.05606-B31B1B)](https://arxiv.org/abs/1805.05606)
